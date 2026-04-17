@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>他們在等待一個家 — 特殊需求孩子的收養困境</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 基礎設定 */
+:root {
+  --cream: #f5f0e8;
+  --ink: #1a1612;
+  --rust: #b84c2a;
+  --paper: #ede8df;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Noto Serif TC', serif;
+  line-height: 1.8;
+  overflow-x: hidden; /* 防止左右晃動 */
+}
+
+/* 頂部進度條 */
+#progress-bar {
+  position: fixed;
+  top:0; left:0; height:5px;
+  background: var(--rust);
+  width: 0%; z-index: 999;
+  transition: width 0.4s;
+}
+
+/* 封面：確保一定會顯示 */
+#cover {
+  width: 100%; height: 100vh;
+  background: var(--ink); color: #fff;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 20px;
+}
+.cover-title { font-size: clamp(28px, 5vw, 48px); margin-bottom: 20px; line-height: 1.3; }
+.start-btn {
+  background: var(--rust); color: #fff; border: none;
+  padding: 16px 60px; font-size: 18px; cursor: pointer;
+  border-radius: 4px; font-family: 'Noto Serif TC';
+}
+
+/* 故事容器 */
+#story-container { display: none; padding-bottom: 100px; }
+
+/* 文章段落 */
+.article-section {
+  max-width: 700px; margin: 0 auto;
+  padding: 60px 25px 20px;
+  display: none; /* 預設隱藏，由 JS 控制顯示 */
+}
+h2 { font-size: 26px; margin: 30px 0 20px; color: var(--rust); }
+p { font-size: 18px; margin-bottom: 20px; text-align: justify; font-weight: 300; }
+strong { color: var(--rust); font-weight: 700; }
+blockquote {
+  border-left: 5px solid var(--rust); padding: 15px 25px;
+  background: rgba(184, 76, 42, 0.05); margin: 30px 0; font-style: italic;
+}
+cite { display: block; margin-top: 10px; font-size: 14px; color: #777; font-style: normal; }
+
+/* 互動題區塊 */
+.quiz-section {
+  max-width: 700px; margin: 40px auto;
+  padding: 40px 25px; background: #fff;
+  border: 1px solid #ddd; border-radius: 8px;
+  display: none;
+}
+.quiz-section.dark { background: var(--paper); border: none; }
+.quiz-question { font-size: 22px; font-weight: 700; margin-bottom: 25px; }
+
+/* 按鈕樣式 */
+.options { display: flex; flex-direction: column; gap: 12px; }
+.opt-btn {
+  padding: 15px; border: 1px solid #ccc; background: #fff;
+  text-align: left; cursor: pointer; font-size: 16px; border-radius: 4px;
+}
+.opt-btn:hover { background: #f9f9f9; border-color: var(--rust); }
+.opt-btn.selected { background: rgba(184, 76, 42, 0.05); border: 2px solid var(--rust); }
+
+.next-step-btn {
+  margin-top: 25px; padding: 12px 40px; background: var(--rust);
+  color: #fff; border: none; cursor: pointer; display: block;
+  font-size: 16px; border-radius: 4px;
+}
+
+/* 揭曉資訊 */
+.reveal-box {
+  margin-top: 25px; padding: 25px; background: var(--ink);
+  color: #fff; border-radius: 4px; display: none;
+}
+.stat-big { font-size: 48px; color: var(--rust); font-weight: 900; line-height: 1; margin-bottom: 10px; }
+
+/* 結尾 */
+#final-section { 
+  background: var(--ink); color: #fff; padding: 100px 25px; 
+  text-align: center; display: none; 
+}
+
+/* 動畫效果 */
+.fade-in { animation: fadeInEffect 0.8s forwards; }
+@keyframes fadeInEffect {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<div id="cover">
+  <h1 class="cover-title">家還有多遠？<br>特殊兒童收養困境下的漫漫長路</h1>
+  <p style="margin-bottom: 30px; color: var(--dust);">這是一篇關於等待、抉擇與制度的互動報導</p>
+  <button class="start-btn" onclick="initStory()">進入報導</button>
+</div>
+
+<div id="story-container">
+
+  <div class="quiz-section fade-in" id="step-1" style="display: block;">
+    <div class="quiz-question">在閱讀前，請分享你目前的身份：</div>
+    <div class="options">
+      <button class="opt-btn" onclick="solveQ1(this)">已收養 / 有意願收養孩子的家長</button>
+      <button class="opt-btn" onclick="solveQ1(this)">相關領域工作者（社工、醫療、教育）</button>
+      <button class="opt-btn" onclick="solveQ1(this)">關心此議題的社會大眾</button>
+    </div>
+    <div class="reveal-box" id="reveal-1">
+      <p>不論你的背景為何，在台灣，有一群孩子正站在家庭與機構的交界處。讓我們先從貝貝的故事開始看起。</p>
+      <button class="next-step-btn" onclick="showSection('art-1')">繼續閱讀</button>
+    </div>
+  </div>
+
+  <div class="article-section" id="art-1">
+    <p>「我並不是為了領養一個小孩而去領養，而是因為剛好遇到我女兒。」貝貝媽（化名）回想起十八年前與女兒貝貝相遇的過程。當時，他在愛慈福利基金會擔任義工，將才四個月大、因生父母藥癮而成為<strong>「毒寶寶」</strong>的貝貝帶回家過週末。</p>
+    <p>直到後來，貝貝的生母在監所過世，在安養院接受照護的外公（法律監護人）決定授權出養。貝貝在一歲十個月大時，正式成為了他們的女兒。</p>
+    <h2>特殊兒童國內難找家，「三歲」為媒合分水嶺</h2>
+    <p>究竟什麼樣的孩子會被歸類為「特殊」？小天使家園組長<strong>蘇淑霞</strong>指出，這不僅包含身心障礙，也涵蓋三歲以上的大齡兒童、毒寶寶、甚至僅有血管瘤的孩子。在小天使家園中，特殊需求兒少比例高達 91%，而<strong>「三歲」</strong>更成為收養媒合的分水嶺。</p>
+    <button class="next-step-btn" onclick="showSection('step-2')">面對抉擇</button>
+  </div>
+
+  <div class="quiz-section dark" id="step-2">
+    <div class="quiz-question">若你現在是收養人，面對「媒合意願表」，以下哪些背景會讓你產生遲疑？（可多選）</div>
+    <div class="options">
+      <button class="opt-btn" onclick="this.classList.toggle('selected'); checkQ2();">三歲以上的大齡兒童</button>
+      <button class="opt-btn" onclick="this.classList.toggle('selected'); checkQ2();">原生父母有藥癮或毒癮史</button>
+      <button class="opt-btn" onclick="this.classList.toggle('selected'); checkQ2();">患有身心障礙或發展遲緩</button>
+    </div>
+    <button class="next-step-btn" id="q2-confirm" style="display:none;" onclick="solveQ2()">確認選擇</button>
+    <div class="reveal-box" id="reveal-2">
+      <div class="stat-big">83%</div>
+      <p>根據衛福部社家署數據，台灣特殊需求兒童出養至<strong>國外</strong>的比例高達 83%。</p>
+      <p>勵馨基金會督導<strong>賴沂錚</strong>表示：「我們在國內都會先試幾輪媒合，但最後卡關的幾乎都是健康議題。」</p>
+      <button class="next-step-btn" onclick="showSection('art-2')">繼續閱讀</button>
+    </div>
+  </div>
+
+  <div class="article-section" id="art-2">
+    <p>賴沂錚進一步分析，國外家庭對於原生背景與特殊需求的接納度遠高於台灣，許多在國內被視為特殊的孩童，在國外收養者的價值觀裡，只是生命的另一種樣貌，而非不可踰越的障礙。</p>
+    <p>然而，社會工作研究所副教授<strong>林宜輝</strong>強調，台灣不能把跨國出養當成解方，「必須先處理好國內收養環節，而不是把問題丟給國外，再假裝問題解決了。」</p>
+    <h2>補助未分級，收養家庭的支持在哪？</h2>
+    <p>收養先天性心臟病童的蔡峰肇表示，收養疾病小孩並沒有特別補助，相關資源往往必須自己去找。目前的制度設計，無疑加重了收養家庭的負擔。</p>
+    <button class="next-step-btn" onclick="showSection('step-3')">思考政策</button>
+  </div>
+
+  <div class="quiz-section" id="step-3">
+    <div class="quiz-question">你認為政府應優先提供哪項支持，最能減輕收養家庭的壓力？</div>
+    <div class="options">
+      <button class="opt-btn" onclick="solveQ3(this)">針對特殊需求的「分級生活補助」</button>
+      <button class="opt-btn" onclick="solveQ3(this)">放寬育嬰留停限制（生理年齡放寬至六歲）</button>
+      <button class="opt-btn" onclick="solveQ3(this)">增加社區早療與醫療後援體系</button>
+    </div>
+    <div class="reveal-box" id="reveal-3">
+      <p>勵馨基金會主任<strong>陳玉楨</strong>指出，現行育嬰留停僅限三歲以下。目前衛福部正討論將年限放寬。這不僅是經濟支持，更是國家在告訴家長：<strong>我們看見了你的難處。</strong></p>
+      <button class="next-step-btn" onclick="showSection('art-3')">繼續閱讀</button>
+    </div>
+  </div>
+
+  <div class="article-section" id="art-3">
+    <h2>當不完美成為日常：收養的另一種想像</h2>
+    <p>「那（些挑戰）就是我們的生活啊，一個家庭本來就有各種各樣的樣貌。」貝貝媽說。即便貝貝有自閉症的挑戰，但十八年來的陪伴與進步，證明了只要有人好好陪，孩子進步是很快的。</p>
+    <p>唯有先建構完善的制度環境與支持體系，能接住收養家庭，收養的意願才可能提高，讓這群特殊的孩子，在自己的土地上找到歸屬。</p>
+    <button class="next-step-btn" onclick="showSection('final-section')">完成閱讀</button>
+  </div>
+
+  <div id="final-section">
+    <h2 style="color:#fff;">願每個孩子都能找到家的方向</h2>
+    <p style="color:#888; margin-top: 30px; font-size: 14px;">數據來源：衛福部社家署、勵馨基金會、小天使家園</p>
+  </div>
+
+</div>
+
+<script>
+// --- 初始化與進度控制 ---
+let totalSteps = 7; // Q1, Art1, Q2, Art2, Q3, Art3, Final
+let currentStepCount = 1;
+
+function updateProgressBar() {
+  let percent = (currentStepCount / totalSteps) * 100;
+  document.getElementById('progress-bar').style.width = percent + '%';
+}
+
+function initStory() {
+  document.getElementById('cover').style.display = 'none';
+  document.getElementById('story-container').style.display = 'block';
+  updateProgressBar();
+}
+
+// --- 通用顯示邏輯 ---
+function showSection(id) {
+  const el = document.getElementById(id);
+  el.style.display = 'block';
+  el.classList.add('fade-in');
+  
+  currentStepCount++;
+  updateProgressBar();
+
+  // 稍微延遲捲動，確保內容已繪製
+  setTimeout(() => {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+// --- Q1 邏輯 ---
+function solveQ1(btn) {
+  // 禁用按鈕
+  const opts = btn.parentElement.querySelectorAll('.opt-btn');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  btn.classList.add('selected');
+  // 顯示 Reveal
+  document.getElementById('reveal-1').style.display = 'block';
+}
+
+// --- Q2 邏輯 (複選) ---
+function checkQ2() {
+  const selected = document.querySelectorAll('#step-2 .opt-btn.selected');
+  document.getElementById('q2-confirm').style.display = selected.length > 0 ? 'block' : 'none';
+}
+
+function solveQ2() {
+  const opts = document.querySelectorAll('#step-2 .opt-btn');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  document.getElementById('q2-confirm').style.display = 'none';
+  document.getElementById('reveal-2').style.display = 'block';
+}
+
+// --- Q3 邏輯 ---
+function solveQ3(btn) {
+  const opts = btn.parentElement.querySelectorAll('.opt-btn');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  btn.classList.add('selected');
+  document.getElementById('reveal-3').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
